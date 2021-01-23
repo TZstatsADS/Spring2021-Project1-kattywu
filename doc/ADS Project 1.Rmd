@@ -1,0 +1,12 @@
+---
+title: "How do Americans Vote?"
+output: html_notebook
+---
+
+```{r}
+library(haven)
+anes2016 = read_sav("anes_timeseries_2016.sav")
+head(anes2016)
+dim(anes2016)
+```
+
