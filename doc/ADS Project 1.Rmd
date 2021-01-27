@@ -57,11 +57,11 @@ When people are asked if there is anything they like about Trump, it can be inte
 ```{r, echo = FALSE}
 # 3 affect
 # positive
-plot(trump2$hopeful, main = "Hopeful")
+plot(trump2$hopeful, main = "Hopeful", col = "orange")
 ```
 
 ```{r,echo = FALSE}
-plot(trump2$proud, main = "Proud")
+plot(trump2$proud, main = "Proud", col = "orange")
 ```
 
 When being asked how they feel about Trump with the associated keywords "hopeful" and "proud", which are both positive words used to describe impressions, the answer "never" seems to dominate both questions, meaning that the majority of people might have "never" felt hopeful or proud of Trump.
@@ -70,15 +70,15 @@ When being asked how they feel about Trump with the associated keywords "hopeful
 
 ```{r,echo = FALSE}
 # negative
-plot(trump2$angry, main = "Angry")
+plot(trump2$angry, main = "Angry", col = "dark green")
 ```
 
 ```{r,echo = FALSE}
-plot(trump2$afraid, main = "Afraid")
+plot(trump2$afraid, main = "Afraid", col = "dark green")
 ```
 
 ```{r,echo = FALSE}
-plot(trump2$disgusted, main = "Disgusted")
+plot(trump2$disgusted, main = "Disgusted", col = "dark green")
 ```
 
 While the answers to the keywords "angry", "afraid", and "disgusted", people seem to have polarized answers--either they strongly agree with the affection, or they strongly disagree with it. So there is little conlcusion we can make from the negative keywords based on the above histograms.
@@ -100,7 +100,7 @@ legend("topleft",
       cex=0.6)
 ```
 
-As part of Trump's promise in 2016, building wall in border the Mexico was one of the biggest issue people were concerned or interested in. Similar to results from the negative affection keywords, respondents are polarized when being asked about how they view this promise. People either strongly favor it or strongly oppose this it, so we are not able to conlcude from this histogram whether this promise has helped Trump win.
+As part of Trump's promise in 2016, building wall in border the Mexico was one of the biggest issue people were concerned or interested in. It seems like the majority of the respondents are not strongly favoring the proposal, with a decent amount even opposing it. This suggests that if the results are consistent with the population in reality, building a wall might not be the leading reason that helped Trump win the election.
 
 ```{r, echo = FALSE}
 # is party id consistent with who they voted for?
@@ -126,7 +126,7 @@ As part of Trump's promise in 2016, building wall in border the Mexico was one o
 ```{r,echo = FALSE}
 par(mfrow = c(1,2))
 # like or dislike the Republican party
-hist(parties$like_dislike,xlim = c(-1,10), main = "Favor for Republicans", xlab = "Rating") # favor R
+hist(parties$like_dislike,xlim = c(-1,10), main = "Favor for Republicans", xlab = "Rating", col = "red") # favor R
 
 # favor R?
 #thermo = parties[parties$feeling_thermo > 0,]
@@ -141,7 +141,7 @@ colnames(demos) = c("feeling_thermo","like_dislikeD","R_thermo","R_like_dislike"
 #dislike2$like_dislikeD = as.numeric(dislike$like_dislikeD)
 dislike = demos[demos$like_dislikeD >= 0,]
 
-hist(dislike$like_dislikeD, breaks = 10, main = "Favor for Democrats", xlab = "Rating")
+hist(dislike$like_dislikeD, breaks = 10, main = "Favor for Democrats", xlab = "Rating", col = "light blue")
 ```
 
 
@@ -167,10 +167,10 @@ prefs2 = parties[parties$preference == 20 | parties$preference == 21,]
 #unique(prefs$preference)
 #prefs = as.factor(prefs)
 par(mfrow = c(1,2))
-hist(prefs$preference, breaks = 2,xaxt="n", main = "Voted for Hillary Clinton", xlab = "Preference")
+hist(prefs$preference, breaks = 2,xaxt="n", main = "Voted for Hillary Clinton", xlab = "Preference", col = "red")
 axis(1, at=seq(10, 11, by=1), labels=c("not strong preference", "strong preference"))
 
-hist(prefs2$preference, breaks = 2,xaxt="n", main = "Voted for Donald Trump", xlab = "Preference")
+hist(prefs2$preference, breaks = 2,xaxt="n", main = "Voted for Donald Trump", xlab = "Preference", col = "light blue")
 axis(1, at=seq(20, 21, by=1), labels=c("not strong preference", "strong preference"))
 ```
 
@@ -178,6 +178,6 @@ The survey results neither show favor or oppose for one party over another, as a
 
 # Conclusion
 
-Based on the survey results of the 2016 ANES Time Series data, though responses of positive affection keywords--"hopeful" and "proud"--are not approved by the respondents when being asked how they think about Trump, other factors such as how they would rate their feeling toward Trump, whether building a wall with Mexico should be concerned, along with results showing that there are no apparent trend of the Republican party or Trump dominated over the Democrats or Hillary Clinton. 
+Based on the survey results of the 2016 ANES Time Series data, though responses of positive affection keywords--"hopeful" and "proud"--are not approved by the respondents when being asked how they think about Trump, and there is a slightly opposing opinion on building wall with Mexico. However, other factors such as how they would rate their feeling toward Trump along with results showing that there are no apparent trend of the Republican party or Trump dominated over the Democrats or Hillary Clinton. 
 
 Further investigation is needed to approve or disapprove the significance of the variables/factors from the survey, and conclusions might be biased due to the nature of survey results.
