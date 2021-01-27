@@ -1,12 +1,183 @@
 ---
-title: "How do Americans Vote?"
-output: html_notebook
+title: "Did Trump **Win** in 2016?"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
-```{r}
+# Introduction
+
+The presidential election in 2020 was and still remains controversial just like it was back in 2016 (though in different aspects), some people still believe that the Democratic party should have won four years ago. In this Exploratory Data Analysis, we will be examining the 2016 Time Series data from The *American National Election Studies* (ANES) and try to answer the question: did Trump really **win** the 2016 presidential election?
+
+The answer to the question "did Trump win in 2016" is YES, but let's take a moment and think in a deeper level, did he really? The motivation behind this question is that, in any game, if you ended up become the winner, just because you have won, it does not necessarily mean that you won because you beat your opponent, it could be that your opponent has **lost** the game. In other words, if your opponent did not perform well as expected or there are some external factors affecting their performance at the moment, you could have won because you were the person who just happened to be in the spot playing against your opponent.
+
+Disclaimer: the following analysis is not to question or judge the outcome of the 2016 presidential election nor to discredit any work Trump has done, it is only a guide to consider some factors that might have led him become the president for the past four years. We will only look for patterns and trends that are present in the ANES survey data.
+
+
+```{r,echo = FALSE}
+# loading data for year 2016
 library(haven)
-anes2016 = read_sav("anes_timeseries_2016.sav")
-head(anes2016)
-dim(anes2016)
+anes2016 = read_sav("../data/anes_timeseries_2016.sav")
 ```
 
+
+# Why Trump?
+
+```{r, echo = FALSE}
+parties = anes2016[, c("V161096", "V161158x", "V162284","V162062x", "V162065x", "V162066x")]
+colnames(parties) = c("feeling_thermo", "partyid", "like_dislike", "vote_cand", "turnout", "preference")
+
+trump = anes2016[, c("V161074", "V161087", "V161121", "V161122", "V161123", "V161124", "V161125", "V161196x", "V162079", "V162286")]
+colnames(trump) = c("Is there anything R likes about Republican Pres cand",
+                    "pre Feeling Thermometer",
+                    "angry",
+                    "hopeful",
+                    "afraid",
+                    "proud",
+                    "disgusted",
+                    "Mexico Wall",
+                    "post Feeling thermometer",
+                    "like_dislike")
+trump2 = as_factor(trump)
+
+# 1
+likes = trump[trump$`Is there anything R likes about Republican Pres cand` > 0,]
+likes$`Is there anything R likes about Republican Pres cand` = as.factor(likes$`Is there anything R likes about Republican Pres cand`)
+par(mfrow = c(1,2))
+plot(likes$`Is there anything R likes about Republican Pres cand`, xaxt="n", main = "Is there anything You like about Trump?")
+axis(1, at=seq(1, 2, by=1), labels=c("Yes", "No"))
+hist(trump$`post Feeling thermometer`, xlim = c(4, 100), breaks = 100,main = "Feeling Thermometer about Trump", xlab = "Rating")
+```
+
+When people are asked if there is anything they like about Trump, it can be interpreted as a general "yes" or "no" question without concerning the degree of their likeliness. From the histogram on the left, although there are more responses of "no", the difference between the two answers is not significantly large, i.e. difference exists but it does not show one answer overly populated the survey results. So it does not disapprove the assertion that more people like Trump, nor approve the assertion that more people dislike Trump. Along with the results from asking people to rate their feeling/likeliness towards Trump, with quite uniform distribution shown on the histogram on the right, we cannot make any conclusion that people favor or dislike Trump.
+
+# Affect
+
+```{r, echo = FALSE}
+# 3 affect
+# positive
+plot(trump2$hopeful, main = "Hopeful")
+```
+
+```{r,echo = FALSE}
+plot(trump2$proud, main = "Proud")
+```
+
+When being asked how they feel about Trump with the associated keywords "hopeful" and "proud", which are both positive words used to describe impressions, the answer "never" seems to dominate both questions, meaning that the majority of people might have "never" felt hopeful or proud of Trump.
+
+
+
+```{r,echo = FALSE}
+# negative
+plot(trump2$angry, main = "Angry")
+```
+
+```{r,echo = FALSE}
+plot(trump2$afraid, main = "Afraid")
+```
+
+```{r,echo = FALSE}
+plot(trump2$disgusted, main = "Disgusted")
+```
+
+While the answers to the keywords "angry", "afraid", and "disgusted", people seem to have polarized answers--either they strongly agree with the affection, or they strongly disagree with it. So there is little conlcusion we can make from the negative keywords based on the above histograms.
+
+# Opinions on Building Wall with Mexico
+
+```{r, echo = FALSE}
+# 4 Mexico Wall
+mw = trump2
+mw$`Mexico Wall` = as.numeric(mw$`Mexico Wall`)
+mw = mw[mw$`Mexico Wall` > 0 & mw$`Mexico Wall` <8,]
+mw$`Mexico Wall` = as_factor(mw$`Mexico Wall`)
+
+plot(mw$`Mexico Wall`, main = "Opinions on Building Wall with Mexico")
+legend("topleft", 
+       legend = c("1-Favor a great deal", "2-Favor a moderate amount",
+                              "3-Favor a little", "4-Neither favor nor oppose",
+                              "5-Oppose a little", "6-Oppose a moderate amount", "7-Oppose a great deal"),
+      cex=0.6)
+```
+
+As part of Trump's promise in 2016, building wall in border the Mexico was one of the biggest issue people were concerned or interested in. Similar to results from the negative affection keywords, respondents are polarized when being asked about how they view this promise. People either strongly favor it or strongly oppose this it, so we are not able to conlcude from this histogram whether this promise has helped Trump win.
+
+```{r, echo = FALSE}
+# is party id consistent with who they voted for?
+#voted_trump = parties[,c("vote_cand", "partyid")]
+#voted_trump = voted_trump[voted_trump$partyid != -9 & voted_trump$partyid != -8,]
+#unique(voted_trump$partyid)
+
+#voted_trump$vote_cand = as.numeric(voted_trump$vote_cand)
+#voted_trump$partyid = as.numeric(voted_trump$partyid)
+#voted_trump = voted_trump[voted_trump$vote_cand == 2,]
+#voted_trump = voted_trump[voted_trump$partyid > 0,]
+
+#voted_trump = as_factor(voted_trump)
+#hist(voted_trump$partyid,breaks = 7)
+
+#hist(voted_trump$partyid, breaks=7, xaxt="n")
+#axis(1, at=seq(1, 7, by=1), labels=c("Strong Democrat","Not very strong Democract","Independent-Democrat","Independent","5","6","7"))
+
+```
+
+# Against Democrats?
+
+```{r,echo = FALSE}
+par(mfrow = c(1,2))
+# like or dislike the Republican party
+hist(parties$like_dislike,xlim = c(-1,10), main = "Favor for Republicans", xlab = "Rating") # favor R
+
+# favor R?
+#thermo = parties[parties$feeling_thermo > 0,]
+#thermo = ifelse(parties$feeling_thermo >= 50, 1, 0)
+#hist(thermo$feeling_thermo)
+demos = anes2016[,c("V161095", "V162283","V161096","V162284")]
+colnames(demos) = c("feeling_thermo","like_dislikeD","R_thermo","R_like_dislike")
+
+#dislike = demos[demos$R_like_dislike < 0,]
+#unique(dislike$like_dislikeD)
+#dislike2 = dislike
+#dislike2$like_dislikeD = as.numeric(dislike$like_dislikeD)
+dislike = demos[demos$like_dislikeD >= 0,]
+
+hist(dislike$like_dislikeD, breaks = 10, main = "Favor for Democrats", xlab = "Rating")
+```
+
+
+```{r, echo = FALSE}
+
+#D_like_vs_dislike = ifelse(dislike$like_dislikeD < 5, 0, 1)
+
+#hist(D_like_vs_dislike,breaks = 2, xaxt="n")
+#axis(1, at=seq(1, 2, by=1), labels=c("Dislike", "Like"))
+```
+
+```{r, echo = FALSE}
+# R vs. D
+#prefs = parties[parties$preference > 0 & parties$preference < 22,]
+prefs = parties
+pref2 = parties
+prefs$preference = as.numeric(prefs$preference)
+#prefs2$preference = as.numeric(prefs2$preference)
+prefs = prefs[prefs$preference == 10 | prefs$preference == 11,]
+prefs2 = parties[parties$preference == 20 | parties$preference == 21,]
+#sum(parties$preference==21)
+
+#unique(prefs$preference)
+#prefs = as.factor(prefs)
+par(mfrow = c(1,2))
+hist(prefs$preference, breaks = 2,xaxt="n", main = "Voted for Hillary Clinton", xlab = "Preference")
+axis(1, at=seq(10, 11, by=1), labels=c("not strong preference", "strong preference"))
+
+hist(prefs2$preference, breaks = 2,xaxt="n", main = "Voted for Donald Trump", xlab = "Preference")
+axis(1, at=seq(20, 21, by=1), labels=c("not strong preference", "strong preference"))
+```
+
+The survey results neither show favor or oppose for one party over another, as answers to likeliness of each party is consistent and there is no apparent trend in concluding that one party has dominated. Similarly, based on the responses on which candidate people have voted for, it seems like the majority of people are voting on their on wills, meaning that they have preference on one candidate over another.
+
+# Conclusion
+
+Based on the survey results of the 2016 ANES Time Series data, though responses of positive affection keywords--"hopeful" and "proud"--are not approved by the respondents when being asked how they think about Trump, other factors such as how they would rate their feeling toward Trump, whether building a wall with Mexico should be concerned, along with results showing that there are no apparent trend of the Republican party or Trump dominated over the Democrats or Hillary Clinton. 
+
+Further investigation is needed to approve or disapprove the significance of the variables/factors from the survey, and conclusions might be biased due to the nature of survey results.
